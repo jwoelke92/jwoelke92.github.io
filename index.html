@@ -26,7 +26,7 @@
         <input type="text" id="txtSource" value="" style="width: 200px" placeholder="Origin..."/>&nbsp;
         <input type="text" id="txtDestination" value="" style="width: 200px" placeholder="Dest Test..."/>&nbsp;
         <input type="button" value="Get Route" onclick="GetRoute()" />&nbsp;
-		<input type="button" value="Locate Stations" onclick="parseStationMarkers()" disabled />
+		<input type="button" value="Locate Stations" onclick="parseStationMarkers()" style="cursor: not-allowed;" disabled />
         <hr />
     </td>
 </tr>
@@ -38,11 +38,11 @@
 </tr>
 <tr>
     <td>
-        <div id="dvMap" style="width: 500px; height: 500px">
+        <div id="dvMap" style="width: 50%;">
         </div>
     </td>
     <td>
-        <div id="dvPanel" style="width: 500px; height: 500px">
+        <div id="dvPanel" style="width: 50%;">
         </div>
     </td>
 </tr>
