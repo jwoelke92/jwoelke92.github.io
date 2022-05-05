@@ -55,6 +55,13 @@ function loadMap(){
 			lng: -98.35 
 		}
 	});
+	
+	//Display username if available...
+	if(username){
+		var currentUser = document.getElementById("currentUser");
+		currentUser.innerHTML = "";
+		currentUser.innerHTML += "Current User: <b>" + username + "</b>";
+	};
 };
 
 
@@ -67,60 +74,65 @@ function GetRoute() {
     //*********DIRECTIONS AND ROUTE**********************//
     source = document.getElementById("txtSource").value;
     destination = document.getElementById("txtDestination").value;
+	
+	if(!source || !destination){
+		window.alert("Please enter valid origin and destination...");
+	}else{
  
-    var request = {
-        origin: source,
-        destination: destination,
-        travelMode: google.maps.TravelMode.DRIVING
-    };
-    directionsService.route(request, function (response, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
-            directionsDisplay.setDirections(response);
-			
-			//Create polyline from route...
-			var bounds = new google.maps.LatLngBounds();
+		var request = {
+			origin: source,
+			destination: destination,
+			travelMode: google.maps.TravelMode.DRIVING
+		};
+		directionsService.route(request, function (response, status) {
+			if (status == google.maps.DirectionsStatus.OK) {
+				directionsDisplay.setDirections(response);
+				
+				//Create polyline from route...
+				var bounds = new google.maps.LatLngBounds();
 
-			var legs = response.routes[0].legs;
-			for (i = 0; i < legs.length; i++) {
-				var steps = legs[i].steps;
-				for (j = 0; j < steps.length; j++) {
-				  var nextSegment = steps[j].path;
-				  for (k = 0; k < nextSegment.length; k++) {
-					routePolyline.getPath().push(nextSegment[k]);
-					bounds.extend(nextSegment[k]);
-				  }
+				var legs = response.routes[0].legs;
+				for (i = 0; i < legs.length; i++) {
+					var steps = legs[i].steps;
+					for (j = 0; j < steps.length; j++) {
+					  var nextSegment = steps[j].path;
+					  for (k = 0; k < nextSegment.length; k++) {
+						routePolyline.getPath().push(nextSegment[k]);
+						bounds.extend(nextSegment[k]);
+					  }
+					}
 				}
-			}
 
-			routePolyline.setMap(map);
-        }else{
-			window.alert('Directions request failed due to ' + status);
-		}
-    });
- 
-    //*********DISTANCE AND DURATION**********************//
-    var service = new google.maps.DistanceMatrixService();
-    service.getDistanceMatrix({
-        origins: [source],
-        destinations: [destination],
-        travelMode: google.maps.TravelMode.DRIVING,
-        unitSystem: google.maps.UnitSystem.IMPERIAL,
-        avoidHighways: false,
-        avoidTolls: false
-    }, function (response, status) {
-        if (status == google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status != "ZERO_RESULTS") {
-            var distance = response.rows[0].elements[0].distance.text;
-            var duration = response.rows[0].elements[0].duration.text;
-            var dvDistance = document.getElementById("dvDistance");
-           dvDistance.innerHTML = "";
-            dvDistance.innerHTML += "Distance: " + distance + "<br />";
-            dvDistance.innerHTML += "Duration:" + duration;
- 
-        } else {
-            alert("Unable to find the distance via road.");
-        }
-    });
-}
+				routePolyline.setMap(map);
+			}else{
+				window.alert('Directions request failed due to ' + status);
+			}
+		});
+	 
+		//*********DISTANCE AND DURATION**********************//
+		var service = new google.maps.DistanceMatrixService();
+		service.getDistanceMatrix({
+			origins: [source],
+			destinations: [destination],
+			travelMode: google.maps.TravelMode.DRIVING,
+			unitSystem: google.maps.UnitSystem.IMPERIAL,
+			avoidHighways: false,
+			avoidTolls: false
+		}, function (response, status) {
+			if (status == google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status != "ZERO_RESULTS") {
+				var distance = response.rows[0].elements[0].distance.text;
+				var duration = response.rows[0].elements[0].duration.text;
+				var dvDistance = document.getElementById("dvDistance");
+			   dvDistance.innerHTML = "";
+				dvDistance.innerHTML += "Distance: " + distance + "<br />";
+				dvDistance.innerHTML += "Duration:" + duration;
+	 
+			} else {
+				alert("Unable to find the distance via road.");
+			}
+		});
+	};
+};
 
 
 
@@ -140,7 +152,7 @@ function parseStationMarkers() {
 			
 			var stations = xml.documentElement.getElementsByTagName('*');
 
-			//Populate markerArrP array...
+			//Populate stationsOnRouteline array...
 			for (var i = 0; i < stations.length; i++) {
 				
 				//Create lat/lng for reference checking...
@@ -149,14 +161,13 @@ function parseStationMarkers() {
 				//If location is on routeline, create and display marker...
 				if (google.maps.geometry.poly.isLocationOnEdge(latLng, routePolyline, 0.01)) {
 					
-					//Create necessary variables to be used in marker creation...
-					var nameInfo = stations[i].getAttribute('name');
-					var street = stations[i].getAttribute('street');
-					var city = stations[i].getAttribute('city');
-					var contentString = "<div style = 'width:200px;min-height:40px'>" + "<strong>"+nameInfo + "</strong>" + "</div>" + "<p>"+ street + "<br>" + city  + "</div>";
+					//Create necessary variables to be used in marker/infowindow creation...
+					var station_info = stations[i].getAttribute('station_info');
+					var price = stations[i].getAttribute('price');
+					var contentString = "<div style = 'width:200px;min-height:40px'> Station: " + station_info + "<br> Price: " + price + "<br></div>";
 				
 					//Alert for testing
-					alert("Location found: " +nameInfo);
+					alert("Location found: " + station_info);
 				
 					//Create marker with data for each entity...
 					var marker = new google.maps.Marker({
