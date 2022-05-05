@@ -25,10 +25,12 @@
 <div class="row-fluid">
 
 	<div class ="col-xs-12">
-		<input type="text" class="form-control" id="txtSource" value="" placeholder="Origin..."/>&nbsp
-		<input type="text" class="form-control" id="txtDestination" value="" placeholder="Destination.."/>&nbsp
+	<form class="form-inline">
+		<input type="text" class="form-control" id="txtSource" value="" placeholder="Origin..."/>
+		<input type="text" class="form-control" id="txtDestination" value="" placeholder="Destination.."/>
 		<button type="button" class="btn btn-success" onclick="GetRoute()" />Get Route</button>
 		<button type="button" class="btn btn-primary" onclick="parseStationMarkers()" style="cursor: not-allowed;" disabled />Locate Stations</button>
+	</form>
 	</div>
 
 </div>
