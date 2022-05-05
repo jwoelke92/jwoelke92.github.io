@@ -60,7 +60,7 @@ function loadMap(){
 	if(username){
 		var currentUser = document.getElementById("currentUser");
 		currentUser.innerHTML = "";
-		currentUser.innerHTML += "Current User: <b>" + username + "</b>";
+		currentUser.innerHTML += "Welcome <b>" + username + "</b>";
 	};
 };
 
