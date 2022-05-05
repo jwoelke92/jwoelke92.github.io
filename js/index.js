@@ -76,7 +76,7 @@ function GetRoute() {
     destination = document.getElementById("txtDestination").value;
 	
 	if(!source || !destination){
-		window.alert("Please enter valid origin and destination...");
+		window.alert("Please enter a valid origin and destination...");
 	}else{
  
 		var request = {
